@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+	<div th:replace="~{fragment :: meta}"></div>
+
+	<div th:replace="~{fragment :: styles}"></div>
+
+	<title>SAMURAI Travel</title>
+</head>
+
+<body>
+	<div class="samuraitravel-wrapper">
+		<!-- ヘッダー -->
+		<div th:replace="~{fragment :: header}"></div>
+
+		<main>
+			<div class="container pt-4 pb-5 samuraitravel-container">
+				<div th:if="${param.loggedIn}" class="alert alert-info">
+					ログインしました。
+				</div>
+
+				<div th:if="${param.loggedOut}" class="alert alert-info">
+					ログアウトしました。
+				</div>
+
+				<div th:if="${successMessage}" class="alert alert-info">
+					<span th:text="${successMessage}"></span>
+				</div>
+
+				<div class="d-flex justify-content-center">
+					<form method="get" th:action="@{/houses}" class="mb-5 samuraitravel-search-form">
+						<div class="input-group">
+							<form method="get" th:action="@{/houses}" class="w-100">
+								<div class="form-group mb-3">
+									<select class="form-control form-select" name="area">
+										<option value="" hidden>カテゴリーから選択</option>
+										<option value="居酒屋" th:selected="${area == '居酒屋'}">居酒屋</option>
+										<option value="焼肉" th:selected="${area == '焼肉'}">焼肉</option>
+										<option value="寿司" th:selected="${area == '寿司'}">寿司</option>
+										<option value="定食" th:selected="${area == '定食'}">定食</option>
+										<option value="カレー" th:selected="${area == 'カレー'}">カレー</option>
+										<option value="中華料理" th:selected="${area == '中華料理'}">中華料理</option>
+										<option value="イタリア料理" th:selected="${area == 'イタリア料理'}">イタリア料理</option>
+										<option value="フランス料理" th:selected="${area == 'フランス料理'}">フランス料理</option>
+										<option value="スペイン料理" th:selected="${area == 'スペイン料理'}">スペイン料理</option>
+										<option value="韓国料理" th:selected="${area == '韓国料理'}">韓国料理</option>
+										<option value="タイ料理" th:selected="${area == 'タイ料理'}">タイ料理</option>
+										<option value="海鮮料理" th:selected="${area == '海鮮料理'}">海鮮料理</option>
+										<option value="ステーキ" th:selected="${area == 'ステーキ'}">ステーキ</option>
+										<option value="ハンバーグ" th:selected="${area == 'ハンバーグ'}">ハンバーグ</option>
+										<option value="ハンバーガー" th:selected="${area == 'ハンバーガー'}">ハンバーガー</option>
+										<option value="そば" th:selected="${area == 'そば'}">そば</option>
+										<option value="お好み焼き" th:selected="${area == 'お好み焼き'}">お好み焼き</option>
+										<option value="たこ焼き" th:selected="${area == 'たこ焼き'}">たこ焼き</option>
+										<option value="鍋料理" th:selected="${area == '鍋料理'}">鍋料理</option>
+										<option value="バー" th:selected="${area == 'バー'}">バー</option>
+										<option value="スイーツ" th:selected="${area == 'スイーツ'}">スイーツ</option>
+										<option value="焼き鳥" th:selected="${area == '焼き鳥'}">焼き鳥</option>
+										<option value="すき焼き" th:selected="${area == 'すき焼き'}">すき焼き</option>
+										<option value="しゃぶしゃぶ" th:selected="${area == 'しゃぶしゃぶ'}">しゃぶしゃぶ</option>
+										<option value="天ぷら" th:selected="${area == '天ぷら'}">天ぷら</option>
+										<option value="鉄板焼き" th:selected="${area == '鉄板焼き'}">鉄板焼き</option>
+									</select>
+								</div>
+								<div class="form-group">
+									<button type="submit"
+										class="btn text-white shadow-sm w-100 samuraitravel-btn">検索</button>
+								</div>
+							</form>
+						</div>
+					</form>
+				</div>
+
+				<div id="carouselContainer" class="carousel slide carousel-fade" data-bs-keyboard="false"
+					data-bs-ride="carousel" data-bs-touch="false" data-bs-pause="false">
+					<div class="carousel-inner w-100 h-100">
+						<div class="carousel-item active" data-bs-interval="7500">
+							<img src="storage/house01.jpg" class="d-block">
+						</div>
+						<div class="carousel-item" data-bs-interval="7500">
+							<img src="storage/house02.jpg" class="d-block">
+						</div>
+						<div class="carousel-item" data-bs-interval="7500">
+							<img src="storage/house03.jpg" class="d-block">
+						</div>
+
+						<div class="d-flex align-items-center w-100 h-100 carousel-text-overlay-panel">
+							<div class="container carousel-text-overlay-container">
+								<div class="text-white carousel-heading">
+									名古屋ならではの味を、<br>見つけよう
+								</div>
+								<div class="text-white carousel-heading">
+									NAGOYAMESHIは、<br>名古屋市のB級グルメ専門のレビューサイトです。
+								</div>
+							</div>
+						</div>
+						<div class="d-flex justify-content-center">
+							<div class="input-group">
+								<form method="get" th:action="@{/houses}" class="w-100">
+									<div class="form-group mb-3">
+										<select class="form-control form-select" name="area">
+											<option value="" hidden>カテゴリーから選択</option>
+											<option value="居酒屋" th:selected="${area == '居酒屋'}">居酒屋</option>
+											<option value="焼肉" th:selected="${area == '焼肉'}">焼肉</option>
+											<option value="寿司" th:selected="${area == '寿司'}">寿司</option>
+											<option value="定食" th:selected="${area == '定食'}">定食</option>
+											<option value="カレー" th:selected="${area == 'カレー'}">カレー</option>
+											<option value="中華料理" th:selected="${area == '中華料理'}">中華料理</option>
+											<option value="イタリア料理" th:selected="${area == 'イタリア料理'}">イタリア料理</option>
+											<option value="フランス料理" th:selected="${area == 'フランス料理'}">フランス料理</option>
+											<option value="スペイン料理" th:selected="${area == 'スペイン料理'}">スペイン料理</option>
+											<option value="韓国料理" th:selected="${area == '韓国料理'}">韓国料理</option>
+											<option value="タイ料理" th:selected="${area == 'タイ料理'}">タイ料理</option>
+											<option value="海鮮料理" th:selected="${area == '海鮮料理'}">海鮮料理</option>
+											<option value="ステーキ" th:selected="${area == 'ステーキ'}">ステーキ</option>
+											<option value="ハンバーグ" th:selected="${area == 'ハンバーグ'}">ハンバーグ</option>
+											<option value="ハンバーガー" th:selected="${area == 'ハンバーガー'}">ハンバーガー</option>
+											<option value="そば" th:selected="${area == 'そば'}">そば</option>
+											<option value="お好み焼き" th:selected="${area == 'お好み焼き'}">お好み焼き</option>
+											<option value="たこ焼き" th:selected="${area == 'たこ焼き'}">たこ焼き</option>
+											<option value="鍋料理" th:selected="${area == '鍋料理'}">鍋料理</option>
+											<option value="バー" th:selected="${area == 'バー'}">バー</option>
+											<option value="スイーツ" th:selected="${area == 'スイーツ'}">スイーツ</option>
+											<option value="焼き鳥" th:selected="${area == '焼き鳥'}">焼き鳥</option>
+											<option value="すき焼き" th:selected="${area == 'すき焼き'}">すき焼き</option>
+											<option value="しゃぶしゃぶ" th:selected="${area == 'しゃぶしゃぶ'}">しゃぶしゃぶ</option>
+											<option value="天ぷら" th:selected="${area == '天ぷら'}">天ぷら</option>
+											<option value="鉄板焼き" th:selected="${area == '鉄板焼き'}">鉄板焼き</option>
+										</select>
+									</div>
+									<div class="form-group">
+										<button type="submit"
+											class="btn text-white shadow-sm w-100 samuraitravel-btn">検索</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+
+		<!-- フッター -->
+		<div th:replace="~{fragment :: footer}"></div>
+	</div>
+
+	<div th:replace="~{fragment :: scripts}"></div>
+</body>
+
+</html>
