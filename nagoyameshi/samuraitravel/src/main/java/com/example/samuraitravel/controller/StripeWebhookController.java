@@ -39,9 +39,16 @@ public class StripeWebhookController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
-        if ("checkout.session.completed".equals(event.getType())) {
+        switch (event.getType()) {
+        case "checkout.session.completed":
             stripeService.processSessionCompleted(event);
-        }
+            break;
+        case "invoice.payment_succeeded":
+            stripeService.paymentSuccess(event);
+            break;
+        default:
+            break;
+    }
 
         return new ResponseEntity<>("Success", HttpStatus.OK);
     }

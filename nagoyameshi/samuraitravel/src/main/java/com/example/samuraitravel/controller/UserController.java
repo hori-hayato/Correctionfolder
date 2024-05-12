@@ -10,30 +10,41 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.samuraitravel.entity.Subscription;
 import com.example.samuraitravel.entity.User;
 import com.example.samuraitravel.form.UserEditForm;
+import com.example.samuraitravel.repository.SubscriptionRepository;
 import com.example.samuraitravel.repository.UserRepository;
 import com.example.samuraitravel.security.UserDetailsImpl;
+import com.example.samuraitravel.service.StripeService;
 import com.example.samuraitravel.service.UserService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/user")
 public class UserController {
-    private final UserRepository userRepository;  
+	private final UserRepository userRepository;
     private final UserService userService;
-    
-    public UserController(UserRepository userRepository, UserService userService) {
-        this.userRepository = userRepository;  
+    private final StripeService stripeService;
+    private final SubscriptionRepository subscriptionRepository;
+
+    public UserController(UserRepository userRepository, UserService userService, StripeService stripeService, SubscriptionRepository subscriptionRepository) {
+        this.userRepository = userRepository;
         this.userService = userService;
-    }    
+        this.stripeService = stripeService;
+        this.subscriptionRepository = subscriptionRepository;
+    }   
     
     @GetMapping
     public String index(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, Model model) {         
         User user = userRepository.getReferenceById(userDetailsImpl.getUser().getId());  
         
         model.addAttribute("user", user);
+        model.addAttribute("isPaidMember", user.getRole().getName().equals("ROLE_PAID"));
         
         return "user/index";
     }
@@ -64,5 +75,29 @@ public class UserController {
          redirectAttributes.addFlashAttribute("successMessage", "会員情報を編集しました。");
          
          return "redirect:/user";
-     }    
-}
+     }  
+     
+     @GetMapping("/upgrade")
+     public String upgrade(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, @RequestParam(name = "session_id", required = false) String sessionId, HttpServletRequest httpServletRequest, Model model, RedirectAttributes redirectAttributes) {
+         User user = userRepository.getReferenceById(userDetailsImpl.getUser().getId());
+         if (sessionId == null) {
+             String url = stripeService.checkoutSubscription(user, httpServletRequest);
+             return "redirect:" + url;
+         } else {
+             stripeService.subscriptionSuccess(user, sessionId);
+             redirectAttributes.addFlashAttribute("successMessage", "有料会員にアップグレードしました。");
+             return "redirect:/user";
+         }
+     }
+
+     @GetMapping("/downgrade")
+     public String downgrade(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, Model model, RedirectAttributes redirectAttributes) {
+         User user = userRepository.getReferenceById(userDetailsImpl.getUser().getId());
+         Subscription subscription = subscriptionRepository.findByUser(user);
+         if (subscription != null) {
+             stripeService.deleteCustomer(user, subscription.getCustomerId());
+             redirectAttributes.addFlashAttribute("successMessage", "無料会員にダウングレードしました。");
+         }
+         return "redirect:/user";
+     }
+ }
