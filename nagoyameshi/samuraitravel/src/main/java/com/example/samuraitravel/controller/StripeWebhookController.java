@@ -40,15 +40,15 @@ public class StripeWebhookController {
         }
 
         switch (event.getType()) {
-        case "checkout.session.completed":
-            stripeService.processSessionCompleted(event);
-            break;
-        case "invoice.payment_succeeded":
-            stripeService.paymentSuccess(event);
-            break;
-        default:
-            break;
-    }
+            case "checkout.session.completed":
+                stripeService.processSessionCompleted(event);
+                break;
+            case "invoice.payment_succeeded":
+                stripeService.paymentSuccess(event);
+                break;
+            default:
+                break;
+        }
 
         return new ResponseEntity<>("Success", HttpStatus.OK);
     }
